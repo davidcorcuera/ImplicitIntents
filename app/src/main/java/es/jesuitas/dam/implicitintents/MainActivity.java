@@ -3,12 +3,17 @@ package es.jesuitas.dam.implicitintents;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ShareCompat;
 
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -34,8 +39,13 @@ public class MainActivity extends AppCompatActivity {
         Uri webpage = Uri.parse(url);
         Intent intent = new Intent(Intent.ACTION_VIEW, webpage);
 
+        // Get List of all activities able to hand the web intent.
+        PackageManager pm = getPackageManager();
+        List<ResolveInfo> activities = pm.queryIntentActivities(intent,
+                PackageManager.MATCH_DEFAULT_ONLY);
+
         // Find an activity to hand the intent and start that activity.
-        if (intent.resolveActivity(getPackageManager()) != null) {
+        if (intent.resolveActivity(pm) != null) {
             startActivity(intent);
         } else {
             Log.d("ImplicitIntents", "Can't handle this!");
